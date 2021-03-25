@@ -46,15 +46,14 @@ void JSONtoEvent(JsonVariant doc, tide_event_t *o)
 
 int tide_fetch(tide_config_t *tide_config, tide_events_t *tide_events)
 {
-    char uri[100] = "";
+    char uri[60] = "";
     int httpcode = -1;
-    tide_events->valid = false;
 
     snprintf(uri, sizeof(uri), "/uktidalapi/api/V1/Stations/%s/TidalEvents?duration=1", tide_config->station);
     log_i("%s", uri);
     HTTPClient client;
-    // client.useHTTP10(true);
-    client.begin("admiraltyapi.azure-api.net", 443, uri, root_ca);
+    client.useHTTP10(true);
+    client.begin(ADM_HOST, ADM_PORT, uri, root_ca);
     client.addHeader("Ocp-Apim-Subscription-Key", tide_config->key);
     httpcode = client.GET();
     log_i("Back from call");

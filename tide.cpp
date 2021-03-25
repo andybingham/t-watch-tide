@@ -59,17 +59,11 @@ LV_IMG_DECLARE(low);
 void tide_app_setup(void)
 {
     tide_load_config();
-    // init the event storeage
+    // init the event storage
     tide_today.valid = false;
-    tide_event_t blank;
-    tide_today.first = blank;
-    for (int i = 0; i < 4; i++) {
-        tide_today.events[i] = blank;
-    }
-
 
     // get an app tile and copy mainstyle
-    tide_app_setup_tile_num = mainbar_add_app_tile(1, 2, "Weather App");
+    tide_app_setup_tile_num = mainbar_add_app_tile(1, 2, "Tides App");
 
     tide_setup_tile_setup(tide_app_setup_tile_num);
     tide_app = app_register("tide", &tide, enter_tide_widget_event_cb);
@@ -78,9 +72,9 @@ void tide_app_setup(void)
     tide_add_widget();
 
     tide_widget_event_handle = xEventGroupCreate();
-    widget_set_label(tide_widget, "n/a");
+    widget_set_label(tide_widget, "--:--");
 
-    wifictl_register_cb(WIFICTL_OFF | WIFICTL_CONNECT, tide_widget_wifictl_event_cb, "tide");
+    // wifictl_register_cb(WIFICTL_OFF | WIFICTL_CONNECT, tide_widget_wifictl_event_cb, "tide");
 }
 
 bool tide_widget_wifictl_event_cb(EventBits_t event, void *arg)
@@ -130,7 +124,7 @@ void tide_widget_sync_request(void)
         widget_hide_indicator(tide_widget);
         xTaskCreate(tide_widget_sync_Task,    /* Function to implement the task */
                     "tide widget sync Task",  /* Name of the task */
-                    8192,                     /* Stack size in words */
+                    12368,                     /* Stack size in words */
                     NULL,                     /* Task input parameter */
                     1,                        /* Priority of the task */
                     &_tide_widget_sync_Task); /* Task handle. */
